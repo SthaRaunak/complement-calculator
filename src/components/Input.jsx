@@ -82,7 +82,7 @@ function Input() {
               </p>
             </div>
           </>
-        ) : (
+        ) : resultBinary.length>0 &&(
           <>
             <div>
               <h2 className="text-2xl font-medium">
