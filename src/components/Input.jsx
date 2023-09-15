@@ -7,6 +7,7 @@ function Input() {
   const [equalizedBinary, setEqualizedBinary] = useState([]);
   const [onesComplementOfQ, setOnesComplementOfQ] = useState();
   const [arrayOfOnes, setArrayOfOnes] = useState();
+  const [sumOfOnesComp, setSumOfOnesComp] = useState();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -45,15 +46,15 @@ function Input() {
     setEqualizedBinary(binaryResult);
     stepFindOnesComp([...binaryResult]);
   }
-  
-  //This function calculates ones complement of Q 
+
+  //This function calculates ones complement of Q
   function stepFindOnesComp(binaryResult) {
     //generating string of Ones
     let tempArrayOfOnes = "";
     for (let i = 0; i < binaryResult[1].length; i++) {
       tempArrayOfOnes += "1";
     }
-    //setting it as a state so as to render 
+    //setting it as a state so as to render
     setArrayOfOnes(tempArrayOfOnes);
 
     //Converting the binary to decimal to perform calculations
@@ -63,13 +64,33 @@ function Input() {
 
     let BinaryDifference = decimalDifference.toString(2);
 
-    //Equalizing length of the answer by adding zero 
+    //Equalizing length of the answer by adding zero
     if (BinaryDifference.length != binaryResult[1].length) {
       while (BinaryDifference.length < binaryResult[1].length) {
         BinaryDifference = "0" + BinaryDifference;
       }
     }
     setOnesComplementOfQ(BinaryDifference);
+    //seding Copy of Binary Difference to next step
+    stepAddOnesComp(BinaryDifference.slice(), [...binaryResult]);
+  }
+
+  //This function adds the ones complement of Q with P
+  function stepAddOnesComp(onesComp, binaryResult) {
+    //Converted to Decimal and Added
+    const decimalSumOfCompWithFirstBinary =
+      parseInt(onesComp, 2) + parseInt(binaryResult[0], 2);
+    let binarySumOfCompWithFirstBinary =
+      decimalSumOfCompWithFirstBinary.toString(2);
+
+    //Equalizing length of the answer by adding zero
+    if (parseInt(onesComp, 2) < parseInt(binaryResult[0], 2)) {
+      while (binarySumOfCompWithFirstBinary.length < onesComp.length) {
+        binarySumOfCompWithFirstBinary = "0" + binarySumOfCompWithFirstBinary;
+      }
+    }
+
+    setSumOfOnesComp(binarySumOfCompWithFirstBinary);
   }
 
   return (
@@ -103,7 +124,8 @@ function Input() {
 
         {binaryList.length > 0 && (
           <h2 className="text-3xl pb-5 pt-[50px] font-bold">
-            {binaryList[0]} - {binaryList[1]}   ({binaryList[1]} From {binaryList[0]})
+            {binaryList[0]} - {binaryList[1]} ({binaryList[1]} From{" "}
+            {binaryList[0]})
           </h2>
         )}
 
@@ -146,7 +168,26 @@ function Input() {
                 <br />
                 ---------
                 <br />
-                {onesComplementOfQ} 
+                {onesComplementOfQ}
+              </p>
+            </div>
+          </>
+        )}
+
+        {sumOfOnesComp && (
+          <>
+            <div>
+              <h2 className="text-2xl font-medium">
+                Step 3: Add the 1's complement of Q with P
+              </h2>
+              <p className="text-xl pt-5">
+                {" "}
+                {onesComplementOfQ}
+                <br />+ {equalizedBinary[0] || binaryList[0]}
+                <br />
+                ---------
+                <br />
+                {sumOfOnesComp}
               </p>
             </div>
           </>
