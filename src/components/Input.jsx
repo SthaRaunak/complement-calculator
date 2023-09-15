@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 function Input() {
   const [firstBinary, setFirstBinary] = useState("");
   const [secondBinary, setSecondBinary] = useState("");
-  const [resultBinary, setResultBinary] = useState([]);
+  const [binaryList, setBinaryList] = useState([]);
   const [equalizedBinary, setEqualizedBinary] = useState([]);
+  const [onesComplementOfQ, setOnesComplementOfQ] = useState();
+  const [arrayOfOnes, setArrayOfOnes] = useState();
 
   function handleSubmit(e) {
-    debugger;
     e.preventDefault();
+
     if (!firstBinary || !secondBinary) {
       return;
     } else {
+      binaryList;
       const binaryResult = [firstBinary, secondBinary];
-      setResultBinary(binaryResult);
+      setBinaryList(binaryResult);
       if (binaryResult[0].length != binaryResult[1].length) {
         stepEqualize([...binaryResult]);
       } else {
         setEqualizedBinary([]);
+      }
+
+      if (binaryResult[0].length == binaryResult[1].length) {
+        stepFindOnesComp([...binaryResult]);
       }
 
       setFirstBinary("");
@@ -25,6 +32,7 @@ function Input() {
     }
   }
 
+  //If the two inputs of binary dont have equal length this function will run.
   function stepEqualize(binaryResult) {
     while (binaryResult[0].length < binaryResult[1].length) {
       binaryResult[0] = "0" + binaryResult[0];
@@ -33,12 +41,40 @@ function Input() {
     while (binaryResult[0].length > binaryResult[1].length) {
       binaryResult[1] = "0" + binaryResult[1];
     }
+
     setEqualizedBinary(binaryResult);
+    stepFindOnesComp([...binaryResult]);
+  }
+  
+  //This function calculates ones complement of Q 
+  function stepFindOnesComp(binaryResult) {
+    //generating string of Ones
+    let tempArrayOfOnes = "";
+    for (let i = 0; i < binaryResult[1].length; i++) {
+      tempArrayOfOnes += "1";
+    }
+    //setting it as a state so as to render 
+    setArrayOfOnes(tempArrayOfOnes);
+
+    //Converting the binary to decimal to perform calculations
+    const decimalDifference =
+      parseInt(tempArrayOfOnes, 2) - parseInt(binaryResult[1], 2);
+    //Convert back to binary
+
+    let BinaryDifference = decimalDifference.toString(2);
+
+    //Equalizing length of the answer by adding zero 
+    if (BinaryDifference.length != binaryResult[1].length) {
+      while (BinaryDifference.length < binaryResult[1].length) {
+        BinaryDifference = "0" + BinaryDifference;
+      }
+    }
+    setOnesComplementOfQ(BinaryDifference);
   }
 
   return (
     <>
-      <div className="container mx-auto py-12">
+      <div className="container mx-auto py-12 px-5">
         <form onSubmit={handleSubmit}>
           <input
             type="string"
@@ -65,9 +101,9 @@ function Input() {
           <button>Submit</button>
         </form>
 
-        {resultBinary.length > 0 && (
+        {binaryList.length > 0 && (
           <h2 className="text-3xl pb-5 pt-[50px] font-bold">
-            {resultBinary[0]} From {resultBinary[1]}
+            {binaryList[0]} - {binaryList[1]}   ({binaryList[1]} From {binaryList[0]})
           </h2>
         )}
 
@@ -82,14 +118,35 @@ function Input() {
               </p>
             </div>
           </>
-        ) : resultBinary.length>0 &&(
+        ) : (
+          binaryList.length > 0 && (
+            <>
+              <div>
+                <h2 className="text-2xl font-medium">
+                  Step 1: Since both the number of bits are equal.
+                </h2>
+                <p className="text-lg">
+                  let P={binaryList[0]} , Q ={binaryList[1]}
+                </p>
+              </div>
+            </>
+          )
+        )}
+
+        {onesComplementOfQ && (
           <>
-            <div>
+            <div className="py-[30px]">
               <h2 className="text-2xl font-medium">
-                Step 1: Since both the number of bits are equal.
+                Step 2: Calculate the 1's complement of Q
               </h2>
-              <p className="text-lg">
-                let P={resultBinary[0]} , Q ={resultBinary[1]}
+              <p className="text-xl pt-5">
+                {" "}
+                {arrayOfOnes}
+                <br />- {equalizedBinary[1] || binaryList[1]}
+                <br />
+                ---------
+                <br />
+                {onesComplementOfQ} 
               </p>
             </div>
           </>
